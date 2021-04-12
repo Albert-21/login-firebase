@@ -11,8 +11,7 @@ const Login = () => {
 
     const haudlAuth = () => {
 
-        if (localStorage.getItem('usuarios')) {
-
+        if (sessionStorage.getItem('usuarios')) {
             history.push('/photos')
 
         } else {
@@ -22,7 +21,7 @@ const Login = () => {
                     usuario = result.user
                     console.log(usuario)
                     console.log(usuario.email.slice(0, -10))
-                    localStorage.setItem('usuario',usuario.email.slice(0, -10))    
+                    sessionStorage.setItem('usuario',usuario.email.slice(0, -10))    
                     history.push('/photos');
                     // ..
                 }).catch((error) => {
@@ -41,13 +40,13 @@ const Login = () => {
 
     return (
         <div>
-            {localStorage.getItem('usuario') ? 
+            {sessionStorage.getItem('usuario') ? 
             <Redirect to='/photos' /> : 
             
             <div class="container">
                 <div class="col text-center">
                     <br />
-                    <button type="button" disabled = {!!localStorage.getItem('usuario')} onClick={haudlAuth} class="btn btn-light btn-lg btn-block" >
+                    <button type="button" disabled = {!!sessionStorage.getItem('usuario')} onClick={haudlAuth} class="btn btn-light btn-lg btn-block" >
                         <span class="fab fa-google"></span>
                 Registrate via Google
                 </button>

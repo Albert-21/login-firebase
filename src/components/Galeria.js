@@ -11,8 +11,8 @@ const Galeria = () => {
     const [allImages, setImages] = useState([]);
 
     useEffect(() => {
-         mostrarImagenes()
-    });
+        mostrarImagenes()
+    },[]);
 
 
     const onImageChange = (e) => {
@@ -33,21 +33,19 @@ const Galeria = () => {
     };
     const guardarImagen = () => {
         if (image) {
-            const storageRef = storage.ref(localStorage.getItem('usuario'));
+            const storageRef = storage.ref(sessionStorage.getItem('usuario'));
             const imageRef = storageRef.child(image.name);
             imageRef.put(image).then(() => {
                 storage
-                    .ref(localStorage.getItem('usuario'))
+                    .ref(sessionStorage.getItem('usuario'))
                     .child(image.name)
                     .getDownloadURL()
 
                     .then((url) => {
-                        if (allImages.indexOf(url) < 0) {
-                            setImages((allImages) => [...allImages, url]);
-                            mostrarImagenes()
-                        }
-                        console.log(allImages);
+                        setImage(null);
                         alert("Se guardo correctamente la imagen");
+                        history.push('/photos')
+                        mostrarImagenes()
                     });
             });
         } else {
@@ -56,19 +54,17 @@ const Galeria = () => {
     };
 
     const mostrarImagenes = () => {
-        let storageRef = storage.ref(`${localStorage.getItem('usuario')}`);
-        console.log(allImages);
-
+        allImages.splice(0, allImages.length)
+        let storageRef = storage.ref(`${sessionStorage.getItem('usuario')}`);
         storageRef
             .listAll()
             .then(function (res) {
                 res.items.forEach((imageRef) => {
                     imageRef.getDownloadURL().then((url) => {
-                        if (allImages.indexOf(url) === -1) {
-                            setImages((allImages) => [...allImages, url]);
-                        }
+                        allImages.push(url)
                     });
                 });
+                console.log(allImages);
             })
             .catch(function (error) {
                 console.log(error);
@@ -80,10 +76,10 @@ const Galeria = () => {
         pictureRef
             .delete()
             .then(() => {
-                setImages(allImages.filter((image) => image !== url));
                 alert("Se ha borrado la imagen!");
-            })
-            .catch((err) => {
+                history.push('/photos')  
+                mostrarImagenes()          
+            }).catch((err) => {
                 console.log(err);
             });
     };
@@ -91,7 +87,7 @@ const Galeria = () => {
     const haudlLogut = () => {
         authFirebase.auth().signOut()
             .then(() => {
-                localStorage.removeItem('usuario')
+                sessionStorage.removeItem('usuario')
                 setImages([])
                 history.push('/login')
                 // ...
@@ -109,7 +105,7 @@ const Galeria = () => {
     return (
 
         <div>
-            {!localStorage.getItem('usuario') ? <Redirect to='/login' /> :
+            {!sessionStorage.getItem('usuario') ? <Redirect to='/login' /> :
                 <div>
                     <input type="file" onChange={(e) => {
                         onImageChange(e);
@@ -120,7 +116,7 @@ const Galeria = () => {
                         </svg>
                 guardar
               </button>
-              <button class="btn-flotante" onClick={haudlLogut}><i class="fas fa-sign-out-alt"></i>Cerrar Sesion</button>
+                    <button class="btn-flotante" onClick={haudlLogut}><i class="fas fa-sign-out-alt"></i>Cerrar Sesion</button>
 
                     <div id="photos">
                         {allImages.map((image) => {
