@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory } from 'react-router';
 import { authFirebase, storage } from '../firebase/firebase';
 import './Galeria.css'
+import swal from 'sweetalert';
+
 
 
 const Galeria = () => {
@@ -12,7 +14,7 @@ const Galeria = () => {
 
     useEffect(() => {
         mostrarImagenes()
-    },[]);
+    }, []);
 
 
     const onImageChange = (e) => {
@@ -43,14 +45,29 @@ const Galeria = () => {
 
                     .then((url) => {
                         setImage(null);
-                        alert("Se guardo correctamente la imagen");
-                        history.push('/photos')
+                        swal({
+                            title: "Proceso Exitoso...",
+                            text: "La imagen se guardo Correctamente",
+                            icon: "success",
+                            buttons: true,
+                        })
+                            .then((guardado) => {
+                                if (guardado) {
+                                    mostrarImagenes()
+                                } else {
+                                    swal("A ocurrido un error");
+                                }
+                            });
                         mostrarImagenes()
                     });
             });
         } else {
-            alert("Guarde primero una imagen");
-        }
+            swal({
+                title: "Error...",
+                text: "Primero seleccione una imagen",
+                icon: "warning",
+                buttons: true,
+            })}
     };
 
     const mostrarImagenes = () => {
@@ -72,15 +89,30 @@ const Galeria = () => {
     };
 
     const borrarImagen = (url) => {
-        let pictureRef = storage.refFromURL(url);
-        pictureRef
-            .delete()
-            .then(() => {
-                alert("Se ha borrado la imagen!");
-                history.push('/photos')  
-                mostrarImagenes()          
-            }).catch((err) => {
-                console.log(err);
+
+        swal({
+            title: "Estas Seguro?",
+            text: "¡Una vez eliminado, no podrá recuperar esta imagen!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    let pictureRef = storage.refFromURL(url);
+                    pictureRef
+                        .delete()
+                        .then(() => {
+                            mostrarImagenes()
+                        }).catch((err) => {
+                            console.log(err);
+                        });
+                    swal("¡Tu imagen ha sido eliminada!", {
+                        icon: "success",
+                    });
+                } else {
+                    swal("Tu imagen no ha sido borrada");
+                }
             });
     };
 
