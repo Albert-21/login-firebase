@@ -8,13 +8,16 @@ function Navbar() {
 
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
-            <li class="nav-item">
-              <Link to="/home" class="navbar-brand">Home</Link>
-            </li>
+          <li class="nav-item">
+            <Link to="/home" class="navbar-brand">Home</Link>
+          </li>
 
-            <li class="nav-item">
-              <Link to="/login" class="navbar-brand">login</Link>
-            </li>
+          <li className="nav-item">
+            <Link className="nav-link" to={"/sign-in"}>Login</Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
+          </li>
         </ul>
       </div>
     </nav>

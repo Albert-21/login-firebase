@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, useHistory } from 'react-router';
 import { authFirebase, provider } from '../firebase/firebase';
+import SignIn from './SignIn';
 
 const Login = () => {
 
@@ -41,11 +42,12 @@ const Login = () => {
     return (
         <div>
             {sessionStorage.getItem('usuario') ? 
-            <Redirect to='/photos' /> : 
-            
+            <Redirect to='/photos' /> :
             <div class="container">
                 <div class="col text-center">
+                <SignIn/> 
                     <br />
+                    <h4>Galeria</h4>
                     <button type="button" disabled = {!!sessionStorage.getItem('usuario')} onClick={haudlAuth} class="btn btn-light btn-lg btn-block" >
                         <span class="fab fa-google"></span>
                 Registrate via Google
